@@ -1,6 +1,5 @@
 package com.rsschool.quiz
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.rsschool.quiz.data.QuestionStorage
 import com.rsschool.quiz.databinding.FragmentQuizPagerBinding
+import com.rsschool.quiz.listeners.ViewPagerCallback
 
 
-class QuizPagerFragment : Fragment(), PageChangerListener {
+class QuizPagerFragment : Fragment(), ViewPagerCallback {
 
     private var _binding: FragmentQuizPagerBinding? = null
 
@@ -26,7 +26,7 @@ class QuizPagerFragment : Fragment(), PageChangerListener {
         _binding = FragmentQuizPagerBinding.inflate(inflater, container, false)
         binding.pager.adapter = QuizPagerAdapter(this)
         binding.pager.isUserInputEnabled = false
-        binding.pager.offscreenPageLimit = 2
+        binding.pager.offscreenPageLimit = 1
         return binding.root
     }
 

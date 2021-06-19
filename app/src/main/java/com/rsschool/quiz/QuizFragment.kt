@@ -8,10 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.rsschool.quiz.data.QuestionStorage
 import com.rsschool.quiz.databinding.FragmentQuizBinding
+import com.rsschool.quiz.listeners.FragmentStartCallback
+import com.rsschool.quiz.listeners.ViewPagerCallback
 import kotlin.properties.Delegates
 
 
@@ -21,9 +24,13 @@ class QuizFragment : Fragment() {
 
     private val binding get() = requireNotNull(_binding)
 
-    private var _pageChangerListener: PageChangerListener? = null
+    private var _viewPagerCallback: ViewPagerCallback? = null
 
-    private val pageChangerListener get() = requireNotNull(_pageChangerListener)
+    private val viewPagerCallback get() = requireNotNull(_viewPagerCallback)
+
+    private var _fragmentStartCallback: FragmentStartCallback? = null
+
+    private val fragmentStartCallback get() = requireNotNull(_fragmentStartCallback)
 
     private var position by Delegates.notNull<Int>()
 
@@ -39,7 +46,11 @@ class QuizFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        _pageChangerListener = this.parentFragment as? PageChangerListener
+
+        _viewPagerCallback = parentFragment as? ViewPagerCallback
+            ?: throw RuntimeException("$context must implement SecondFragmentStarter")
+
+        _fragmentStartCallback = context as? FragmentStartCallback
             ?: throw RuntimeException("$context must implement SecondFragmentStarter")
     }
 
@@ -50,49 +61,24 @@ class QuizFragment : Fragment() {
     ): View {
         position = arguments?.getInt(POSITION) ?: throw IllegalArgumentException()
 
-        // set app theme
         contextThemeWrapper = ContextThemeWrapper(requireActivity(), themes[position % themes.size])
 
-        _binding = FragmentQuizBinding.inflate(
-            inflater.cloneInContext(contextThemeWrapper),
-            container,
-            false
-        )
-
-        showQuestion(position)
-
-        binding.previousButton.isEnabled = position > 0
-        binding.previousButton.setOnClickListener {
-            pageChangerListener.previousPage()
-        }
-
-        binding.nextButton.isEnabled = false
-        binding.nextButton.setOnClickListener {
-            pageChangerListener.nextPage()
-        }
-
-        binding.radioGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
-            if (position < QuestionStorage.getQuestionCount() - 1) {
-                binding.nextButton.isEnabled = true
-            }
-
-            val checkedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
-            val checkedIndex = radioGroup.indexOfChild(checkedRadioButton)
+        inflater.cloneInContext(contextThemeWrapper).let { localInflater ->
+            _binding = FragmentQuizBinding.inflate(localInflater, container, false)
         }
 
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        // set status bar color
-        val typedValue = TypedValue()
-        contextThemeWrapper.theme.resolveAttribute(android.R.attr.statusBarColor, typedValue, true)
-        requireActivity().window.statusBarColor = typedValue.data
+        setQuestion()
+        setStates()
+        setListeners()
     }
 
-    private fun showQuestion(position: Int) {
+    private fun setQuestion() {
         binding.toolbar.title = getString(R.string.title, position + 1)
 
         val question = QuestionStorage.getQuestion(position)
@@ -104,6 +90,74 @@ class QuizFragment : Fragment() {
             binding.optionFour.text = it.options[3].answer
             binding.optionFive.text = it.options[4].answer
         }
+    }
+
+    private fun setStates() {
+        binding.run {
+            val isFirstQuestion = QuestionStorage.isFirstQuestion(position)
+            val isFinalQuestion = QuestionStorage.isFinalQuestion(position)
+
+            previousButton.isEnabled = !isFirstQuestion
+
+
+            if (isFinalQuestion) {
+                nextButton.visibility = View.GONE
+                submitButton.visibility = View.VISIBLE
+
+            } else {
+                nextButton.visibility = View.VISIBLE
+                submitButton.visibility = View.GONE
+            }
+
+            toolbar.navigationIcon =
+                if (!isFirstQuestion)
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_baseline_chevron_left_24
+                    )
+                else
+                    null
+        }
+    }
+
+    private fun setListeners() {
+        binding.run {
+            toolbar.setNavigationOnClickListener {
+                viewPagerCallback.previousPage()
+            }
+
+            previousButton.setOnClickListener {
+                viewPagerCallback.previousPage()
+            }
+
+            nextButton.setOnClickListener {
+                viewPagerCallback.nextPage()
+            }
+
+            submitButton.setOnClickListener {
+                fragmentStartCallback.startQuizResultFragment()
+            }
+
+            radioGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
+                if (QuestionStorage.isFinalQuestion(position)) {
+                    submitButton.isEnabled = true
+                } else {
+                    nextButton.isEnabled = true
+                }
+
+                val checkedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
+                val checkedPosition = radioGroup.indexOfChild(checkedRadioButton)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // set status bar color
+        val typedValue = TypedValue()
+        contextThemeWrapper.theme.resolveAttribute(android.R.attr.statusBarColor, typedValue, true)
+        requireActivity().window.statusBarColor = typedValue.data
     }
 
     override fun onDestroyView() {

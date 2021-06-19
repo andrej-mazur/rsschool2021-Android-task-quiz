@@ -62,4 +62,12 @@ object QuestionStorage {
     fun getQuestionCount(): Int {
         return questions.size
     }
+
+    fun isFirstQuestion(position: Int): Boolean {
+        return position == 0
+    }
+
+    fun isFinalQuestion(position: Int): Boolean {
+        return position == questions.size - 1
+    }
 }
