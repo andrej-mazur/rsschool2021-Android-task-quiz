@@ -11,6 +11,7 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import com.rsschool.quiz.data.AnswerStorage
 import com.rsschool.quiz.data.QuestionStorage
 import com.rsschool.quiz.databinding.FragmentQuizBinding
 import com.rsschool.quiz.listeners.FragmentStartCallback
@@ -146,7 +147,9 @@ class QuizFragment : Fragment() {
                 }
 
                 val checkedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
-                val checkedPosition = radioGroup.indexOfChild(checkedRadioButton)
+                val checkedAnswerPosition = radioGroup.indexOfChild(checkedRadioButton)
+
+                AnswerStorage.setAnswer(position, checkedAnswerPosition)
             }
         }
     }

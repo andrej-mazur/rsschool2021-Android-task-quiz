@@ -2,7 +2,7 @@ package com.rsschool.quiz.data
 
 object QuestionStorage {
 
-    private val questions: List<Question> = listOf(
+    val questions: List<Question> = listOf(
         Question(
             "Столица штата Гавайи?",
             listOf(

@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import com.rsschool.quiz.data.AnswerStorage
+import com.rsschool.quiz.data.QuestionStorage
 import com.rsschool.quiz.databinding.FragmentQuizResultBinding
 import com.rsschool.quiz.listeners.FragmentStartCallback
 
@@ -38,6 +40,15 @@ class QuizResultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val questions = QuestionStorage.questions
+        val answers = AnswerStorage.answers
+        val correctAnswers = questions.filterIndexed { index, question ->
+            question.options[answers[index]].correct
+        }.toList()
+
+        val percentage = ((correctAnswers.size.toDouble() / questions.size) * 100).toInt()
+        binding.result.text = getString(R.string.result, percentage)
 
         setListeners()
     }

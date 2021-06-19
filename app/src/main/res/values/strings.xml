@@ -4,5 +4,5 @@
     <string name="previous">Previous</string>
     <string name="next">Next</string>
     <string name="submit">Submit</string>
-    <string name="result">Your result: %1$d%</string>
+    <string name="result">Your result: %1$d%%</string>
 </resources>
