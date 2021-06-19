@@ -11,8 +11,7 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import com.rsschool.quiz.data.AnswerStorage
-import com.rsschool.quiz.data.QuestionStorage
+import com.rsschool.quiz.data.DataStorage
 import com.rsschool.quiz.databinding.FragmentQuizBinding
 import com.rsschool.quiz.listeners.FragmentStartCallback
 import com.rsschool.quiz.listeners.ViewPagerCallback
@@ -49,10 +48,10 @@ class QuizFragment : Fragment() {
         super.onAttach(context)
 
         _viewPagerCallback = parentFragment as? ViewPagerCallback
-            ?: throw RuntimeException("$context must implement SecondFragmentStarter")
+            ?: throw RuntimeException("$context must implement ViewPagerCallback")
 
         _fragmentStartCallback = context as? FragmentStartCallback
-            ?: throw RuntimeException("$context must implement SecondFragmentStarter")
+            ?: throw RuntimeException("$context must implement FragmentStartCallback")
     }
 
     override fun onCreateView(
@@ -82,21 +81,21 @@ class QuizFragment : Fragment() {
     private fun setQuestion() {
         binding.toolbar.title = getString(R.string.title, position + 1)
 
-        val question = QuestionStorage.getQuestion(position)
+        val question = DataStorage.getQuestion(position)
         question?.let {
-            binding.question.text = it.question
-            binding.optionOne.text = it.options[0].answer
-            binding.optionTwo.text = it.options[1].answer
-            binding.optionThree.text = it.options[2].answer
-            binding.optionFour.text = it.options[3].answer
-            binding.optionFive.text = it.options[4].answer
+            binding.question.text = it.text
+            binding.optionOne.text = it.options[0].text
+            binding.optionTwo.text = it.options[1].text
+            binding.optionThree.text = it.options[2].text
+            binding.optionFour.text = it.options[3].text
+            binding.optionFive.text = it.options[4].text
         }
     }
 
     private fun setStates() {
         binding.run {
-            val isFirstQuestion = QuestionStorage.isFirstQuestion(position)
-            val isFinalQuestion = QuestionStorage.isFinalQuestion(position)
+            val isFirstQuestion = DataStorage.isFirstQuestion(position)
+            val isFinalQuestion = DataStorage.isFinalQuestion(position)
 
             previousButton.isEnabled = !isFirstQuestion
 
@@ -140,7 +139,7 @@ class QuizFragment : Fragment() {
             }
 
             radioGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
-                if (QuestionStorage.isFinalQuestion(position)) {
+                if (DataStorage.isFinalQuestion(position)) {
                     submitButton.isEnabled = true
                 } else {
                     nextButton.isEnabled = true
@@ -149,7 +148,7 @@ class QuizFragment : Fragment() {
                 val checkedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
                 val checkedAnswerPosition = radioGroup.indexOfChild(checkedRadioButton)
 
-                AnswerStorage.setAnswer(position, checkedAnswerPosition)
+                DataStorage.selectOption(position, checkedAnswerPosition)
             }
         }
     }

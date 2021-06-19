@@ -4,5 +4,10 @@
     <string name="previous">Previous</string>
     <string name="next">Next</string>
     <string name="submit">Submit</string>
-    <string name="result">Your result: %1$d%%</string>
+    <string name="result_title">Quiz result</string>
+    <string name="short_result">Your result: %1$d of %2$d</string>
+    <string name="full_report">%1$d. %2$s\nYour answer: %3$s - %4$s\n</string>
+    <string name="right">Right!</string>
+    <string name="wrong">Wrong!</string>
+
 </resources>

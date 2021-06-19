@@ -1,14 +1,14 @@
 package com.rsschool.quiz
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import com.rsschool.quiz.data.AnswerStorage
-import com.rsschool.quiz.data.QuestionStorage
+import com.rsschool.quiz.data.DataStorage
 import com.rsschool.quiz.databinding.FragmentQuizResultBinding
 import com.rsschool.quiz.listeners.FragmentStartCallback
 
@@ -22,11 +22,17 @@ class QuizResultFragment : Fragment() {
 
     private val fragmentStartCallback get() = requireNotNull(_fragmentStartCallback)
 
+    private var correctOptions = 0
+
+    private var shortResult = ""
+
+    private var fullResult = ""
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
         _fragmentStartCallback = context as? FragmentStartCallback
-            ?: throw RuntimeException("$context must implement SecondFragmentStarter")
+            ?: throw RuntimeException("$context must implement FragmentStartCallback")
     }
 
     override fun onCreateView(
@@ -41,30 +47,47 @@ class QuizResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val questions = QuestionStorage.questions
-        val answers = AnswerStorage.answers
-        val correctAnswers = questions.filterIndexed { index, question ->
-            question.options[answers[index]].correct
-        }.toList()
+        for ((index, question) in DataStorage.questions.withIndex()) {
+            val selectedOptionIndex = DataStorage.selectedOptions[index]
+            val selectedOption = question.options[selectedOptionIndex]
+            if (selectedOption.correct) {
+                correctOptions++
+            }
 
-        val percentage = ((correctAnswers.size.toDouble() / questions.size) * 100).toInt()
-        binding.result.text = getString(R.string.result, percentage)
+            fullResult += getString(
+                R.string.full_report,
+                (index + 1),
+                question.text,
+                selectedOption.text,
+                if (selectedOption.correct) getString(R.string.right) else getString(R.string.wrong)
+            )
+        }
+
+        shortResult = getString(R.string.short_result, correctOptions, DataStorage.questions.size)
+
+        binding.result.text = shortResult
 
         setListeners()
     }
 
     private fun setListeners() {
         binding.run {
+            binding.share.setOnClickListener {
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_SUBJECT, getString(R.string.result_title));
+                    putExtra(Intent.EXTRA_TEXT, "${shortResult}\n${fullResult}")
+                    type = "text/plain"
+                }
+                startActivity(Intent.createChooser(sendIntent, null))
+            }
+
             binding.back.setOnClickListener {
                 fragmentStartCallback.startQuizPagerFragment()
             }
 
             binding.close.setOnClickListener {
                 requireActivity().finishAndRemoveTask()
-            }
-
-            binding.share.setOnClickListener {
-
             }
         }
     }

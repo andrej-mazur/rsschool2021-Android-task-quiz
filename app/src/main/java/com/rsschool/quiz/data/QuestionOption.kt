@@ -1,6 +1,6 @@
 package com.rsschool.quiz.data
 
-data class AnswerOption(
-    val answer: String,
+data class QuestionOption(
+    val text: String,
     val correct: Boolean
 )

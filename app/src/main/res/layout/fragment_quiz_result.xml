@@ -25,11 +25,10 @@
         android:id="@+id/result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/result"
         android:textAlignment="center"
         android:textSize="22sp"
         app:layout_constraintBottom_toTopOf="@id/horizontal_guideline"
-        tools:text="Your result: 100%" />
+        tools:text="Your result: 5 of 5" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/share"

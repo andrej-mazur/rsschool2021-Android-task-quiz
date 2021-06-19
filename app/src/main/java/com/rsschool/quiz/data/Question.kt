@@ -1,6 +1,6 @@
 package com.rsschool.quiz.data
 
 data class Question(
-    val question: String,
-    val options: List<AnswerOption>
+    val text: String,
+    val options: List<QuestionOption>
 )
