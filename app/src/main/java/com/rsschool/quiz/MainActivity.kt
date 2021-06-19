@@ -14,13 +14,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        startQuiz(0)
+        startQuizPagerFragment()
     }
 
-    fun startQuiz(questionIndex: Int) {
-        val quizFragment: Fragment = QuizFragment.newInstance(questionIndex)
+    private fun startQuizPagerFragment() {
+        val fragment: Fragment = QuizPagerFragment.newInstance()
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, quizFragment)
+            .replace(R.id.container, fragment)
+            .commit()
+    }
+
+    private fun startQuizResultFragment() {
+        val fragment: Fragment = QuizResultFragment.newInstance()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
             .commit()
     }
 }

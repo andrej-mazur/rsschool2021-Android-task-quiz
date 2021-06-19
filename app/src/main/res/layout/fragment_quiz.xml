@@ -22,7 +22,7 @@
             android:fitsSystemWindows="true"
             app:navigationContentDescription="Back to the previous question"
             app:navigationIcon="@drawable/ic_baseline_chevron_left_24"
-            app:title="Question 1" />
+            app:title="@string/title" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -89,24 +89,28 @@
                     android:id="@+id/option_one"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:duplicateParentState="true"
                     tools:text="Option 1" />
 
                 <RadioButton
                     android:id="@+id/option_two"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:duplicateParentState="true"
                     tools:text="Option 2" />
 
                 <RadioButton
                     android:id="@+id/option_three"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:duplicateParentState="true"
                     tools:text="Option 3" />
 
                 <RadioButton
                     android:id="@+id/option_four"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:duplicateParentState="true"
                     tools:checked="true"
                     tools:text="Option 4" />
 
@@ -114,6 +118,7 @@
                     android:id="@+id/option_five"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:duplicateParentState="true"
                     tools:text="Option 5" />
 
             </RadioGroup>

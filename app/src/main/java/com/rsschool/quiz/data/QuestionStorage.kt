@@ -58,4 +58,8 @@ object QuestionStorage {
     fun getQuestion(index: Int): Question? {
         return questions.getOrNull(index)
     }
+
+    fun getQuestionCount(): Int {
+        return questions.size
+    }
 }

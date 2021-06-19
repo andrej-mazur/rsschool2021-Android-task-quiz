@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import com.rsschool.quiz.databinding.FragmentResultBinding
+import com.rsschool.quiz.databinding.FragmentQuizResultBinding
 
-class ResultFragment : Fragment() {
+class QuizResultFragment : Fragment() {
 
-    private var _binding: FragmentResultBinding? = null
+    private var _binding: FragmentQuizResultBinding? = null
 
     private val binding get() = requireNotNull(_binding)
 
@@ -19,7 +19,7 @@ class ResultFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentResultBinding.inflate(inflater, container, false)
+        _binding = FragmentQuizResultBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -32,10 +32,8 @@ class ResultFragment : Fragment() {
 
         @JvmStatic
         fun newInstance() =
-            ResultFragment().apply {
-                arguments = bundleOf(
-                    /*TODO*/
-                )
+            QuizResultFragment().apply {
+                arguments = bundleOf()
             }
     }
 }
