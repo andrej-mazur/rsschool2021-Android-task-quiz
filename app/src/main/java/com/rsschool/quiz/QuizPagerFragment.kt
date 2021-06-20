@@ -1,9 +1,11 @@
 package com.rsschool.quiz
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -18,6 +20,12 @@ class QuizPagerFragment : Fragment(), ViewPagerCallback {
 
     private val binding get() = requireNotNull(_binding)
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -28,6 +36,21 @@ class QuizPagerFragment : Fragment(), ViewPagerCallback {
         binding.pager.isUserInputEnabled = false
         binding.pager.offscreenPageLimit = 1
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (binding.pager.currentItem > 0) {
+                        previousPage()
+                    } else {
+                        requireActivity().finishAndRemoveTask()
+                    }
+                }
+            })
     }
 
     override fun onDestroyView() {

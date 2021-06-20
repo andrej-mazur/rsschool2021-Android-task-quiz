@@ -3,7 +3,6 @@ package com.rsschool.quiz
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.rsschool.quiz.data.DataStorage
 import com.rsschool.quiz.databinding.ActivityMainBinding
 import com.rsschool.quiz.listeners.FragmentStartCallback
 
@@ -20,7 +19,6 @@ class MainActivity : AppCompatActivity(), FragmentStartCallback {
     }
 
     override fun startQuizPagerFragment() {
-        DataStorage.reset()
         val fragment: Fragment = QuizPagerFragment.newInstance()
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)

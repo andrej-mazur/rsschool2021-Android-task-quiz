@@ -73,9 +73,16 @@ class QuizFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        init()
         setQuestion()
         setStates()
         setListeners()
+    }
+
+    private fun init() {
+        if (DataStorage.isFirstQuestion(position)) {
+            DataStorage.reset()
+        }
     }
 
     private fun setQuestion() {
